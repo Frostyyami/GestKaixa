@@ -42,3 +42,4 @@ C:\Users\Daniel\Documents\GestKaixa\obj\Debug\net6.0\refint\GestKaixa.dll
 C:\Users\Daniel\Documents\GestKaixa\obj\Debug\net6.0\GestKaixa.pdb
 C:\Users\Daniel\Documents\GestKaixa\obj\Debug\net6.0\GestKaixa.genruntimeconfig.cache
 C:\Users\Daniel\Documents\GestKaixa\obj\Debug\net6.0\ref\GestKaixa.dll
+C:\Users\Daniel\Documents\GestKaixa\obj\Debug\net6.0\GestKaixa.sourcelink.json

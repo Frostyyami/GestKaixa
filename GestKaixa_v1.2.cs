@@ -275,6 +275,31 @@ namespace GestKaixa
                 UI.Error("Operació rebutjada: " + ex.Message);
             }
         }
+        public static void CanviarContrasenya(int usuariId)
+        {
+            UI.Titol("Canviar contrasenya");
+            string actual = UI.LlegirPassword("Contrasenya actual");
+            string nova   = UI.LlegirPassword("Nova contrasenya");
+            string confirma = UI.LlegirPassword("Confirma la nova contrasenya");
+
+            if (nova != confirma) { UI.Error("Les contrasenyes no coincideixen."); return; }
+            if (!UI.Confirmar("Canviar la contrasenya?")) return;
+
+            try
+            {
+                using var conn = DB.Connect();
+                const string sql = @"UPDATE Usuaris SET password = @nova
+                                    WHERE id = @uid AND password = @actual";
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@nova",   nova);
+                cmd.Parameters.AddWithValue("@uid",    usuariId);
+                cmd.Parameters.AddWithValue("@actual", actual);
+                int files = cmd.ExecuteNonQuery();
+                if (files == 0) UI.Error("Contrasenya actual incorrecta.");
+                else UI.Ok("Contrasenya canviada correctament.");
+            }
+            catch (MySqlException ex) { UI.Error("Error: " + ex.Message); }
+        }
     }
 
     // --------------------------------------------------------
@@ -505,7 +530,7 @@ namespace GestKaixa
             while (actiu)
             {
                 Console.Clear();
-                Console.WriteLine($"\n  \x1b[1mGestKaixa v1.2 — {sessio.Username}\x1b[0m");
+                Console.WriteLine($"\n  \x1b[1mGestKaixa v2.0 — {sessio.Username}\x1b[0m");
                 UI.Separador();
                 Console.WriteLine("  1. Veure els meus comptes");
                 Console.WriteLine("  2. Consultar saldo");
@@ -513,6 +538,7 @@ namespace GestKaixa
                 Console.WriteLine("  4. Fer un ingrés");
                 Console.WriteLine("  5. Fer una retirada");
                 Console.WriteLine("  6. Veure alertes");
+                Console.WriteLine("  7. Canviar contrasenya");
                 Console.WriteLine("  0. Sortir");
                 UI.Separador();
                 Console.Write("  Opció: ");
@@ -525,6 +551,7 @@ namespace GestKaixa
                     case "4": ClientOps.FerIngres(sessio.Id);      UI.Pausa(); break;
                     case "5": ClientOps.FerRetirada(sessio.Id);    UI.Pausa(); break;
                     case "6": ClientOps.VeureAlertes(sessio.Id);   UI.Pausa(); break;
+                    case "7": ClientOps.CanviarContrasenya(sessio.Id); UI.Pausa(); break;
                     case "0": actiu = false;                                    break;
                     default:  UI.Error("Opció no vàlida.");        UI.Pausa(); break;
                 }
@@ -538,7 +565,7 @@ namespace GestKaixa
             while (actiu)
             {
                 Console.Clear();
-                Console.WriteLine($"\n  \x1b[1mGestKaixa v1.2 — Administrador ({sessio.Username})\x1b[0m");
+                Console.WriteLine($"\n  \x1b[1mGestKaixa v2.0 — Administrador ({sessio.Username})\x1b[0m");
                 UI.Separador();
                 Console.WriteLine("  1. Registrar nou usuari");
                 Console.WriteLine("  2. Obrir nou compte");
@@ -572,7 +599,7 @@ namespace GestKaixa
             Console.Clear();
 
             Console.WriteLine("\n  \x1b[1m\x1b[36m╔══════════════════════════╗");
-            Console.WriteLine("  ║    GestKaixa  v1.2       ║");
+            Console.WriteLine("  ║    GestKaixa  v2.0       ║");
             Console.WriteLine("  ╚══════════════════════════╝\x1b[0m\n");
 
             try { using var _ = DB.Connect(); }
